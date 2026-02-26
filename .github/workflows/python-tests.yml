@@ -1,0 +1,26 @@
+name: CI Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: pip install Flask Flask-SQLAlchemy
+    
+    - name: Test application
+      run: python -c "from app import app; print('Application imported successfully')"
+    
+    - name: Check files
+      run: |
+        ls -la
+        [ -f "app.py" ] && echo "app.py exists" || echo "app.py missing"

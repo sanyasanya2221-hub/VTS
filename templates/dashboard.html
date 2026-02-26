@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Панель администратора</h1>
+        <a href="/add_employee" class="btn">Добавить сотрудника</a>
+        
+        <h2>Список сотрудников</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Должность</th>
+                <th>Дата посещения</th>
+                <th>Действия</th>
+            </tr>
+            {% for emp in employees %}
+            <tr>
+                <td>{{ emp.id }}</td>
+                <td>{{ emp.name }}</td>
+                <td>{{ emp.position }}</td>
+                <td>{{ emp.hire_date }}</td>
+                <td>
+                    <form action="/check_in" method="post" style="display: inline;">
+                        <input type="hidden" name="employee_id" value="{{ emp.id }}">
+                        <button type="submit" class="btn-small green">Приход</button>
+                    </form>
+                    <form action="/check_out" method="post" style="display: inline;">
+                        <input type="hidden" name="employee_id" value="{{ emp.id }}">
+                        <button type="submit" class="btn-small red">Уход</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2>История посещений</h2>
+        <table>
+            <tr>
+                <th>ID сотрудника</th>
+                <th>Дата</th>
+                <th>Приход</th>
+                <th>Уход</th>
+            </tr>
+            {% for att in attendances %}
+            <tr>
+                <td>{{ att.employee_id }}</td>
+                <td>{{ att.date }}</td>
+                <td>{% if att.check_in %}{{ att.check_in.strftime('%H:%M:%S') }}{% else %}-{% endif %}</td>
+                <td>{% if att.check_out %}{{ att.check_out.strftime('%H:%M:%S') }}{% else %}-{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="success">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>
